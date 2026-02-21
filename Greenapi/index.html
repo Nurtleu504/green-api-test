@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>GREEN API Test</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    width: 900px;
+    margin: 20px auto;
+}
+
+.left {
+    width: 40%;
+    padding-right: 20px;
+}
+
+.right {
+    width: 60%;
+}
+
+input, textarea, button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    cursor: pointer;
+}
+
+textarea {
+    height: 100px;
+    resize: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="left">
+
+<input type="text" id="idInstance" placeholder="idInstance">
+<input type="text" id="apiTokenInstance" placeholder="ApiTokenInstance">
+
+<button onclick="getSettings()">getSettings</button>
+<button onclick="getStateInstance()">getStateInstance</button>
+
+<input type="text" id="phoneNumber" placeholder="77771234567">
+<textarea id="messageText" placeholder="Hello World!"></textarea>
+
+<button onclick="sendMessage()">sendMessage</button>
+
+<input type="text" id="filePhoneNumber" placeholder="77771234567">
+<input type="text" id="fileUrl" placeholder="https://my-site.com/img/horse.png">
+
+<button onclick="sendFileByUrl()">sendFileByUrl</button>
+
+</div>
+
+<div class="right">
+<label><b>Ответ:</b></label>
+<textarea id="response" readonly></textarea>
+</div>
+
+</div>
+
+<script>
+
+function getBaseUrl() {
+    const idInstance = document.getElementById("idInstance").value;
+    return `https://api.green-api.com/waInstance${idInstance}`;
+}
+
+async function getSettings() {
+    const token = document.getElementById("apiTokenInstance").value;
+
+    const res = await fetch(`${getBaseUrl()}/getSettings/${token}`);
+    const data = await res.json();
+
+    document.getElementById("response").value =
+        JSON.stringify(data, null, 2);
+}
+
+async function getStateInstance() {
+    const token = document.getElementById("apiTokenInstance").value;
+
+    const res = await fetch(`${getBaseUrl()}/getStateInstance/${token}`);
+    const data = await res.json();
+
+    document.getElementById("response").value =
+        JSON.stringify(data, null, 2);
+}
+
+async function sendMessage() {
+    const token = document.getElementById("apiTokenInstance").value;
+    const phone = document.getElementById("phoneNumber").value;
+    const message = document.getElementById("messageText").value;
+
+    const res = await fetch(`${getBaseUrl()}/sendMessage/${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chatId: phone + "@c.us",
+            message: message
+        })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("response").value =
+        JSON.stringify(data, null, 2);
+}
+
+async function sendFileByUrl() {
+    const token = document.getElementById("apiTokenInstance").value;
+    const phone = document.getElementById("filePhoneNumber").value;
+    const url = document.getElementById("fileUrl").value;
+
+    const res = await fetch(`${getBaseUrl()}/sendFileByUrl/${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chatId: phone + "@c.us",
+            urlFile: url,
+            fileName: "file"
+        })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("response").value =
+        JSON.stringify(data, null, 2);
+}
+
+</script>
+
+</body>
+</html>
